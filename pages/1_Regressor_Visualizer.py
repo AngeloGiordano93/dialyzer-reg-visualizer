@@ -266,7 +266,7 @@ def update_slider_value_on_param_select():
     st.session_state.fixed_param_user_value = float(st.session_state.current_params_values[newly_selected_param])
 
 st.session_state.selected_fixed_param_name = st.sidebar.selectbox(
-    "1. Select parameter to modify:",
+    "1. Select parameter to fix:",
     options=param_names,
     format_func=lambda name: PARAM_DISPLAY_MAP.get(name, name), # Use format_func for display
     index=param_names.index(st.session_state.selected_fixed_param_name),
@@ -298,6 +298,9 @@ st.sidebar.markdown("---")
 st.sidebar.button("Update Charts", type="primary")
 
 st.header("Dialyzer Clearance as a function of all parameters")
+
+st.session_state.display_name_fixed = PARAM_DISPLAY_MAP.get(st.session_state.selected_fixed_param_name, st.session_state.selected_fixed_param_name).split(' ')[0]
+st.subheader(f"Fixed parameter: {st.session_state.display_name_fixed}")
 
 # --- AUTOMATIC VISUALIZATION LOGIC ---
 if poly_model and scaler:
