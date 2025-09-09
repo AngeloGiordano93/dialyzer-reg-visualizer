@@ -1,4 +1,3 @@
-# app.py (la tua nuova pagina principale)
 import streamlit as st
 
 st.set_page_config(
