@@ -55,8 +55,8 @@ st.write(
 st.markdown("---")
 
 st.subheader(r"$A_m$: membrane area")
-st.write("Dialyzer membrane area referred to the external diameter. Formula:")
-st.latex(r"A_m = N{\pi}d_{ext}L")
+st.write("Dialyzer membrane area referred to the internal diameter. Formula:")
+st.latex(r"A_m = N{\pi}d_{int}L")
 st.markdown("---")
 
 st.info("Default values indicated in the visualizer app represent a typical use case.")
