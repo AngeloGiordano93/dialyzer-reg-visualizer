@@ -75,9 +75,9 @@ def load_model():
         return None
 
 # Loads model on startup
-poly_model = load_model()
+pred_model = load_model()
 
-if not poly_model:
+if not pred_model:
     st.stop() # Stops the script execution gracefully if the model is not found
 
 # Parameter names (internal)
@@ -184,7 +184,7 @@ def generate_plots_for_streamlit(current_params_values, selected_fixed_param_nam
             temp_params_for_calculation = params_for_plotting.copy()
             temp_params_for_calculation[param_to_vary_name] = varying_val_point
             ordered_params = [temp_params_for_calculation[name] for name in param_names]
-            y = predict_with_model(ordered_params, poly_model)
+            y = predict_with_model(ordered_params, pred_model)
             y_output_values.append(y)
 
         if y_output_values:
@@ -301,7 +301,7 @@ st.session_state.display_name_fixed = PARAM_DISPLAY_MAP.get(st.session_state.sel
 st.subheader(f"Fixed parameter: {st.session_state.display_name_fixed}")
 
 # --- AUTOMATIC VISUALIZATION LOGIC ---
-if poly_model:
+if pred_model:
     fig_to_show = generate_plots_for_streamlit(
         st.session_state.current_params_values,
         st.session_state.selected_fixed_param_name,
