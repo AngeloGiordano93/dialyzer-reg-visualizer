@@ -63,23 +63,22 @@ RANGE_CONFIG = {
 }
 
 # -----------------------------------------------------------------------------
-# 1. MODEL AND SCALER LOADING
+# 1. MODEL LOADING
 # -----------------------------------------------------------------------------
 @st.cache_resource
-def load_model_and_scaler():
+def load_model():
     try:
-        model = joblib.load("polyreg_d4_model.pkl")
-        scaler = joblib.load("polyreg_d4_scaler.pkl")
-        return model, scaler
+        model = joblib.load("svr_model_cfd.pkl")
+        return model
     except FileNotFoundError:
-        st.error("Error: 'polyreg_d4_model.pkl' and 'polyreg_d4_scaler.pkl' files not found. Please ensure they are in the same folder as the script.")
-        return None, None
+        st.error("Error: model '.pkl' file not found. Please ensure it is in the same folder as the script.")
+        return None
 
-# Loads model and scaler on startup
-poly_model, scaler = load_model_and_scaler()
+# Loads model on startup
+poly_model = load_model()
 
-if not poly_model or not scaler:
-    st.stop() # Stops the script execution gracefully if the model or scaler is not found
+if not poly_model:
+    st.stop() # Stops the script execution gracefully if the model is not found
 
 # Parameter names (internal)
 param_names = ['Qb', 'Qd', 'theta', 'Lp', 'eps_d', 'Pb', 'km', 'Am']
@@ -99,16 +98,15 @@ PARAM_DISPLAY_MAP = {
 # -----------------------------------------------------------------------------
 # 2. HELPER FUNCTIONS
 # -----------------------------------------------------------------------------
-def predict_with_model(input_params_list, model, scaler_instance):
+def predict_with_model(input_params_list, model):
     """
-    Uses the loaded model and scaler to generate a clearance prediction.
+    Uses the loaded model to generate a clearance prediction.
     """
-    if model is None or scaler_instance is None:
+    if model is None:
         return 0
 
     input_array = np.array(input_params_list).reshape(1, -1)
-    input_scaled = scaler_instance.transform(input_array)
-    prediction = model.predict(input_scaled)
+    prediction = model.predict(input_array)
     return prediction[0]
 
 def get_parameter_range(param_name, center_value):
@@ -186,7 +184,7 @@ def generate_plots_for_streamlit(current_params_values, selected_fixed_param_nam
             temp_params_for_calculation = params_for_plotting.copy()
             temp_params_for_calculation[param_to_vary_name] = varying_val_point
             ordered_params = [temp_params_for_calculation[name] for name in param_names]
-            y = predict_with_model(ordered_params, poly_model, scaler)
+            y = predict_with_model(ordered_params, poly_model)
             y_output_values.append(y)
 
         if y_output_values:
@@ -303,7 +301,7 @@ st.session_state.display_name_fixed = PARAM_DISPLAY_MAP.get(st.session_state.sel
 st.subheader(f"Fixed parameter: {st.session_state.display_name_fixed}")
 
 # --- AUTOMATIC VISUALIZATION LOGIC ---
-if poly_model and scaler:
+if poly_model:
     fig_to_show = generate_plots_for_streamlit(
         st.session_state.current_params_values,
         st.session_state.selected_fixed_param_name,
