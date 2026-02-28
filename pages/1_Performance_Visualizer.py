@@ -68,7 +68,7 @@ RANGE_CONFIG = {
 @st.cache_resource
 def load_model():
     try:
-        model = joblib.load("svr_model_cfd.pkl")
+        model = joblib.load("svr_model_cfd_urea.pkl")
         return model
     except FileNotFoundError:
         st.error("Error: model '.pkl' file not found. Please ensure it is in the same folder as the script.")
